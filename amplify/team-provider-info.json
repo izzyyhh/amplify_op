@@ -29,6 +29,12 @@
       "StackName": "amplify-amplifyop-prod-05640",
       "StackId": "arn:aws:cloudformation:eu-west-1:257665494067:stack/amplify-amplifyop-prod-05640/6c4cd570-f698-11ed-a14c-0e0f6ad122db",
       "AmplifyAppId": "d3egfvnfy3wcxw"
+    },
+    "categories": {
+      "auth": {
+        "amplifyopbd15c1cc": {},
+        "userPoolGroups": {}
+      }
     }
   }
 }
