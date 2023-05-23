@@ -1,4 +1,20 @@
 {
+  "api": {
+    "izzysRestApi": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "izzysRestApiFunction"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway"
+    }
+  },
   "auth": {
     "amplifyopbd15c1cc": {
       "customAuth": false,
@@ -41,6 +57,32 @@
       ],
       "providerPlugin": "awscloudformation",
       "service": "Cognito-UserPool-Groups"
+    }
+  },
+  "function": {
+    "izzysRestApiFunction": {
+      "build": true,
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_izzysRestApiFunction_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "izzysRestApiFunction"
+        }
+      ]
+    },
+    "AMPLIFY_function_izzysRestApiFunction_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "izzysRestApiFunction"
+        }
+      ]
     }
   }
 }

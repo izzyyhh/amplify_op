@@ -1,9 +1,20 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { useState } from "react";
+import reactLogo from "./assets/react.svg";
+import "./App.css";
+import { API, Amplify, Auth } from "aws-amplify";
+import awsExports from "./aws-exports";
+
+Amplify.configure(awsExports);
+
+const response = await API.get("izzysRestApi", "/izzys", {
+  headers: {},
+  response: true,
+});
+
+console.log(response);
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
   return (
     <div className="App">
@@ -28,7 +39,7 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
