@@ -37,3 +37,7 @@ amplify env checkout dev
 i can view the changes in `amplify/team-provider-info.json`
 
 apparently after pushing on main prod env, the file changes, commit it again on main branch
+
+### TODO
+* add storage
+* add api and link to storage, upload and delete
