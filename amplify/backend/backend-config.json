@@ -89,6 +89,22 @@
           "resourceName": "izzysRestApiFunction"
         }
       ]
+    },
+    "AMPLIFY_function_justIzzysFunction_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "justIzzysFunction"
+        }
+      ]
+    },
+    "AMPLIFY_function_justIzzysFunction_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "justIzzysFunction"
+        }
+      ]
     }
   }
 }
