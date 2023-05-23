@@ -38,6 +38,11 @@ i can view the changes in `amplify/team-provider-info.json`
 
 apparently after pushing on main prod env, the file changes, commit it again on main branch
 
+amplify add api: added gateway und function und linkt diese
+amplify add function: nur funktion, kann wieder verwendet werden, kann als layer fuer andere funktionen dienen
+team provider json fuer das team, dort stehen manche keys die resources identifizieren aber ohne die secret keys kann man die nicht accessen, also kann man die pushen
+
 ### TODO
-* add storage
-* add api and link to storage, upload and delete
+
+- add storage
+- add api and link to storage, upload and delete
