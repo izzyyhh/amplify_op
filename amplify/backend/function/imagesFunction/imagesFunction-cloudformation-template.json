@@ -15,6 +15,10 @@
     },
     "s3Key": {
       "Type": "String"
+    },
+    "storageimagesBucketName": {
+      "Type": "String",
+      "Default": "storageimagesBucketName"
     }
   },
   "Conditions": {
@@ -47,12 +51,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "justIzzysFunction",
+            "imagesFunction",
             {
               "Fn::Join": [
                 "",
                 [
-                  "justIzzysFunction",
+                  "imagesFunction",
                   "-",
                   {
                     "Ref": "env"
@@ -69,6 +73,9 @@
             },
             "REGION": {
               "Ref": "AWS::Region"
+            },
+            "STORAGE_IMAGES_BUCKETNAME": {
+              "Ref": "storageimagesBucketName"
             }
           }
         },
@@ -89,12 +96,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "amplifyopLambdaRolea038627d",
+            "amplifyopLambdaRole662d1c4b",
             {
               "Fn::Join": [
                 "",
                 [
-                  "amplifyopLambdaRolea038627d",
+                  "amplifyopLambdaRole662d1c4b",
                   "-",
                   {
                     "Ref": "env"
@@ -160,6 +167,64 @@
                   }
                 ]
               }
+            }
+          ]
+        }
+      }
+    },
+    "AmplifyResourcesPolicy": {
+      "DependsOn": [
+        "LambdaExecutionRole"
+      ],
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "amplify-lambda-execution-policy",
+        "Roles": [
+          {
+            "Ref": "LambdaExecutionRole"
+          }
+        ],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": "s3:ListBucket",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "storageimagesBucketName"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:DeleteObject"
+              ],
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "storageimagesBucketName"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
             }
           ]
         }

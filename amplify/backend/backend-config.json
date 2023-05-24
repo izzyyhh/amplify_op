@@ -1,5 +1,41 @@
 {
   "api": {
+    "amplifyop": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "amplifyopbd15c1cc"
+        }
+      ],
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [
+            {
+              "apiKeyConfig": {
+                "apiKeyExpirationDate": "2023-06-23T20:21:36.618Z",
+                "apiKeyExpirationDays": 30,
+                "description": "graphqlapikey"
+              },
+              "authenticationType": "API_KEY"
+            },
+            {
+              "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+              "userPoolConfig": {
+                "userPoolId": "authamplifyopbd15c1cc"
+              }
+            }
+          ],
+          "defaultAuthentication": {
+            "authenticationType": "AWS_IAM"
+          }
+        }
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync"
+    },
     "izzysRestApi": {
       "dependsOn": [
         {
@@ -9,6 +45,14 @@
           ],
           "category": "function",
           "resourceName": "izzysRestApiFunction"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "imagesFunction"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -60,6 +104,30 @@
     }
   },
   "function": {
+    "S3Triggerf8c4082f": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "graphQlLambdaAuthorizerc844d0a8": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "imagesFunction": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "BucketName"
+          ],
+          "category": "storage",
+          "resourceName": "images"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "izzysRestApiFunction": {
       "build": true,
       "dependsOn": [],
@@ -74,6 +142,54 @@
     }
   },
   "parameters": {
+    "AMPLIFY_function_S3Triggerf8c4082f_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "S3Triggerf8c4082f"
+        }
+      ]
+    },
+    "AMPLIFY_function_S3Triggerf8c4082f_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "S3Triggerf8c4082f"
+        }
+      ]
+    },
+    "AMPLIFY_function_graphQlLambdaAuthorizerc844d0a8_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "graphQlLambdaAuthorizerc844d0a8"
+        }
+      ]
+    },
+    "AMPLIFY_function_graphQlLambdaAuthorizerc844d0a8_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "graphQlLambdaAuthorizerc844d0a8"
+        }
+      ]
+    },
+    "AMPLIFY_function_imagesFunction_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "imagesFunction"
+        }
+      ]
+    },
+    "AMPLIFY_function_imagesFunction_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "imagesFunction"
+        }
+      ]
+    },
     "AMPLIFY_function_izzysRestApiFunction_deploymentBucketName": {
       "usedBy": [
         {
@@ -105,6 +221,23 @@
           "resourceName": "justIzzysFunction"
         }
       ]
+    }
+  },
+  "storage": {
+    "images": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn",
+            "LambdaExecutionRole"
+          ],
+          "category": "function",
+          "resourceName": "S3Triggerf8c4082f"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "S3"
     }
   }
 }

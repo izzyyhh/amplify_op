@@ -1,5 +1,10 @@
 export type AmplifyDependentResourcesAttributes = {
   "api": {
+    "amplifyop": {
+      "GraphQLAPIEndpointOutput": "string",
+      "GraphQLAPIIdOutput": "string",
+      "GraphQLAPIKeyOutput": "string"
+    },
     "izzysRestApi": {
       "ApiId": "string",
       "ApiName": "string",
@@ -23,6 +28,27 @@ export type AmplifyDependentResourcesAttributes = {
     }
   },
   "function": {
+    "S3Triggerf8c4082f": {
+      "Arn": "string",
+      "LambdaExecutionRole": "string",
+      "LambdaExecutionRoleArn": "string",
+      "Name": "string",
+      "Region": "string"
+    },
+    "graphQlLambdaAuthorizerc844d0a8": {
+      "Arn": "string",
+      "LambdaExecutionRole": "string",
+      "LambdaExecutionRoleArn": "string",
+      "Name": "string",
+      "Region": "string"
+    },
+    "imagesFunction": {
+      "Arn": "string",
+      "LambdaExecutionRole": "string",
+      "LambdaExecutionRoleArn": "string",
+      "Name": "string",
+      "Region": "string"
+    },
     "izzysRestApiFunction": {
       "Arn": "string",
       "LambdaExecutionRole": "string",
@@ -35,6 +61,12 @@ export type AmplifyDependentResourcesAttributes = {
       "LambdaExecutionRole": "string",
       "LambdaExecutionRoleArn": "string",
       "Name": "string",
+      "Region": "string"
+    }
+  },
+  "storage": {
+    "images": {
+      "BucketName": "string",
       "Region": "string"
     }
   }
