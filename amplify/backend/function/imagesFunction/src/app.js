@@ -27,7 +27,7 @@ const s3Client = new S3Client({
 
 // declare a new express app
 const app = express();
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "6mb" }));
 app.use(awsServerlessExpressMiddleware.eventContext());
 
 // Enable CORS for all methods
@@ -56,20 +56,40 @@ app.get("/images/*", function (req, res) {
  ****************************/
 
 app.post("/images", async function (req, res) {
-  // Add your code here
-  const putObjectCommand = new PutObjectCommand({
-    Bucket: process.env.STORAGE_IMAGES_BUCKETNAME,
-    Key: "izzy",
-    Body: req.body.file,
+  /**
+   * @typedef {Object} MyImage
+   * @property {string} name
+   * @property {string} type
+   * @property {string} data
+   *
+   * data is encoded as base64
+   */
+
+  /**
+   * @type {Array<MyImage>}
+   */
+  const images = req.body.images;
+
+  images.forEach(async (image) => {
+    console.log("image", image);
+    const buffer = Buffer.from(image.data, "base64url");
+
+    const putObjectCommand = new PutObjectCommand({
+      Bucket: process.env.STORAGE_IMAGES_BUCKETNAME,
+      Key: image.name,
+      ContentType: image.type,
+      Body: buffer,
+    });
+
+    try {
+      const result = await s3Client.send(putObjectCommand);
+      console.log("S3 result:", result);
+    } catch (e) {
+      console.log(e);
+    }
   });
 
-  try {
-    const result = await s3Client.send(putObjectCommand);
-    console.log("s3result", result);
-  } catch (e) {
-    console.log(e);
-  }
-  res.json({ success: "post call succeed!", url: req.url, body: req.body });
+  res.json({ success: "images uploaded!" });
 });
 
 app.post("/images/*", function (req, res) {
