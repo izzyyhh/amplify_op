@@ -72,7 +72,7 @@ app.post("/images", async function (req, res) {
 
   images.forEach(async (image) => {
     console.log("image", image);
-    const buffer = Buffer.from(image.data, "base64url");
+    const buffer = Buffer.from(image.data, "base64");
 
     const putObjectCommand = new PutObjectCommand({
       Bucket: process.env.STORAGE_IMAGES_BUCKETNAME,

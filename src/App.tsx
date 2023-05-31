@@ -7,7 +7,35 @@ import { imagesPath, izzysRestApi } from "./constants";
 
 Amplify.configure(awsExports);
 
-const upload = async (images: File[]) => {
+type MyImage = {
+  name: string;
+  type: string;
+  data: string;
+};
+
+const convertBase64 = (file: File) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    reader.onload = () => {
+      const result = reader.result as string;
+      const base64Data = result.split(",")[1];
+
+      resolve({
+        name: file.name,
+        type: file.type,
+        data: base64Data,
+      } as MyImage);
+    };
+
+    reader.onerror = (error) => {
+      reject(error);
+    };
+  });
+};
+
+const upload = async (files: File[]) => {
   try {
     // const response = await API.post(izzysRestApi, imagesPath, {
     //   headers: {
@@ -17,12 +45,18 @@ const upload = async (images: File[]) => {
     //   body: { amk: "amk" },
     // });
 
+    const encodedImages = (await Promise.all(
+      files.map((file) => convertBase64(file))
+    )) as MyImage[];
+
+    console.log("encoded images:", encodedImages);
+
     const response = await fetch("http://localhost:3000/images", {
       headers: {
         "Content-Type": "application/json",
       },
       method: "POST",
-      body: JSON.stringify({ dei: "mum" }),
+      body: JSON.stringify({ images: encodedImages }),
     });
     console.log(await response.json());
   } catch (e) {
@@ -51,59 +85,14 @@ const upload = async (images: File[]) => {
 //   console.log(e);
 // }
 
-export const imageChange = async (newImages: Blob[]) => {
-  const newImageUrls: string[] = await Promise.all(
-    newImages.map(async (image: Blob) => {
-      // if (image.type === 'image/heic') {
-      // 	return convertToHeic(image);
-      // } else {
-      // 	return URL.createObjectURL(image);
-      // }
-
-      // fix skip heic
-      if (image.type !== "image/heic") {
-        return URL.createObjectURL(image);
-      }
-      return "";
-    })
-  );
-  return newImageUrls.filter((url) => url !== "");
-};
-
 function App() {
-  const [count, setCount] = useState(0);
-  const [images, setImages] = useState<Array<any>>([]);
-  const [files, setFiles] = useState<Array<File>>([]);
-  console.log("files", files);
+  const [images, setImages] = useState<Array<File>>([]);
 
-  const handleUpload = (newImages: string[]) => {
-    setImages([...images, ...newImages]);
-  };
+  console.log("images", images);
 
   const handleInputChange = (e: any) => {
     const selectedFiles: FileList = e.target.files;
-    setFiles(Array.from(selectedFiles));
-
-    const reader = new FileReader();
-
-    for (let i = 0; i < selectedFiles.length; i++) {
-      console.log(selectedFiles.item(i));
-      reader.readAsDataURL(selectedFiles.item(i) as File);
-      console.log(
-        "object url",
-        URL.createObjectURL(selectedFiles.item(i) as File)
-      );
-    }
-
-    reader.onload = () => {
-      console.log("reader", reader.result);
-    };
-
-    if (e.target.files) {
-      imageChange(Array.from(e.target.files)).then((newUrls) => {
-        handleUpload(newUrls);
-      });
-    }
+    setImages(Array.from(selectedFiles));
   };
 
   return (
@@ -118,13 +107,14 @@ function App() {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
-        <button onClick={() => upload([])}>Upload</button>
+        <button onClick={() => upload(images)}>Upload</button>
       </div>
 
       <input
         type="file"
         name="images"
         id="images"
+        accept="image/*"
         multiple
         ref={(input: any) => input && (input.value = null)}
         onChange={(e) => {
@@ -134,13 +124,16 @@ function App() {
 
       <p className="read-the-docs mt-20 text-left">selected files:</p>
       <ul className=" flex-col">
-        {files.map((file: File) => {
+        {images.map((file: File) => {
           const objectUrl = URL.createObjectURL(file);
           const objectName = file.name;
           const objectType = file.type;
 
           return (
-            <li className="mt-5 border-solid border-black border-2 p-2 rounded w-fit">
+            <li
+              key={objectName}
+              className="mt-5 border-solid border-black border-2 p-2 rounded w-fit"
+            >
               <p className="text-left">{`${objectName}, ${objectType}`}</p>
               <div className="w-[230px] h-[120px]">
                 <img
