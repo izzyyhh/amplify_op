@@ -78,7 +78,7 @@
         },
         "imagesFunction": {
           "deploymentBucketName": "amplify-amplifyop-dev-190834-deployment",
-          "s3Key": "amplify-builds/imagesFunction-784b49617077796e7976-build.zip"
+          "s3Key": "amplify-builds/imagesFunction-43316733546f79354332-build.zip"
         },
         "izzysRestApiFunction": {
           "deploymentBucketName": "amplify-amplifyop-dev-190834-deployment",
