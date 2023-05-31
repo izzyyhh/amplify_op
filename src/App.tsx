@@ -37,53 +37,35 @@ const convertBase64 = (file: File) => {
 
 const upload = async (files: File[]) => {
   try {
-    // const response = await API.post(izzysRestApi, imagesPath, {
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   response: true,
-    //   body: { amk: "amk" },
-    // });
-
     const encodedImages = (await Promise.all(
       files.map((file) => convertBase64(file))
     )) as MyImage[];
 
     console.log("encoded images:", encodedImages);
 
-    const response = await fetch("http://localhost:3000/images", {
+    const response = await API.post(izzysRestApi, imagesPath, {
       headers: {
         "Content-Type": "application/json",
       },
-      method: "POST",
-      body: JSON.stringify({ images: encodedImages }),
+      response: true,
+      body: { images: encodedImages },
     });
-    console.log(await response.json());
+
+    console.log(response);
+
+    // dev
+    // const response = await fetch("http://localhost:3000/images", {
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   method: "POST",
+    //   body: JSON.stringify({ images: encodedImages }),
+    // });
+    // console.log(await response.json());
   } catch (e) {
     console.log(e);
   }
 };
-
-// try {
-//   // const response = await API.post(izzysRestApi, imagesPath, {
-//   //   headers: {
-//   //     "Content-Type": "application/json",
-//   //   },
-//   //   response: true,
-//   //   body: { amk: "amk" },
-//   // });
-
-//   const response = await fetch("http://localhost:3000/images", {
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     method: "POST",
-//     body: JSON.stringify({ dei: "mum" }),
-//   });
-//   console.log(await response.json());
-// } catch (e) {
-//   console.log(e);
-// }
 
 function App() {
   const [images, setImages] = useState<Array<File>>([]);
