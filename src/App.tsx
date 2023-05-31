@@ -74,6 +74,7 @@ function App() {
   const [count, setCount] = useState(0);
   const [images, setImages] = useState<Array<any>>([]);
   const [files, setFiles] = useState<Array<File>>([]);
+  console.log("files", files);
 
   const handleUpload = (newImages: string[]) => {
     setImages([...images, ...newImages]);
@@ -81,6 +82,8 @@ function App() {
 
   const handleInputChange = (e: any) => {
     const selectedFiles: FileList = e.target.files;
+    setFiles(Array.from(selectedFiles));
+
     const reader = new FileReader();
 
     for (let i = 0; i < selectedFiles.length; i++) {
@@ -105,7 +108,7 @@ function App() {
 
   return (
     <div className="App">
-      <div>
+      <div className="flex justify-between">
         <a href="https://vitejs.dev" target="_blank">
           <img src="/vite.svg" className="logo" alt="Vite logo" />
         </a>
@@ -115,12 +118,7 @@ function App() {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+        <button onClick={() => upload([])}>Upload</button>
       </div>
 
       <input
@@ -134,16 +132,26 @@ function App() {
         }}
       />
 
-      <p className="read-the-docs">selected files:</p>
+      <p className="read-the-docs mt-20 text-left">selected files:</p>
       <ul className=" flex-col">
-        <li className="w-[200px] h-[100px]">
-          {" sikter "}
-          <img
-            src="https://c8.alamy.com/compde/khg386/bunten-baumen-am-ufer-des-patricia-lake-im-jasper-national-park-mit-pyramide-berg-im-hintergrund-die-ruhige-see-spiegelt-einen-spiegel-imag-khg386.jpg"
-            alt=""
-            className="h-full w-full object-cover"
-          />
-        </li>
+        {files.map((file: File) => {
+          const objectUrl = URL.createObjectURL(file);
+          const objectName = file.name;
+          const objectType = file.type;
+
+          return (
+            <li className="mt-5 border-solid border-black border-2 p-2 rounded w-fit">
+              <p className="text-left">{`${objectName}, ${objectType}`}</p>
+              <div className="w-[230px] h-[120px]">
+                <img
+                  src={objectUrl}
+                  alt={objectName}
+                  className="h-full w-full object-cover "
+                />
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
