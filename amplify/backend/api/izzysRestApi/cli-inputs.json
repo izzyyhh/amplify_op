@@ -37,6 +37,25 @@
           "update"
         ]
       }
+    },
+    "/upload": {
+      "name": "/upload",
+      "lambdaFunction": "imagesFunction",
+      "permissions": {
+        "setting": "protected",
+        "auth": [
+          "create",
+          "read",
+          "update",
+          "delete"
+        ],
+        "guest": [
+          "create",
+          "read",
+          "update",
+          "delete"
+        ]
+      }
     }
   }
 }

@@ -57,11 +57,10 @@ app.get("/images/*", function (req, res) {
 
 app.post("/images", async function (req, res) {
   // Add your code here
-  console.log("body", body);
   const putObjectCommand = new PutObjectCommand({
     Bucket: process.env.STORAGE_IMAGES_BUCKETNAME,
     Key: "izzy",
-    Body: "Hello izzy",
+    Body: req.body.file,
   });
 
   try {

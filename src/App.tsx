@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import "./App.css";
 import { API, Amplify, Auth } from "aws-amplify";
@@ -7,12 +7,18 @@ import { imagesPath, izzysRestApi } from "./constants";
 
 Amplify.configure(awsExports);
 
-const response = await API.post(izzysRestApi, imagesPath, {
-  headers: {},
-  response: true,
-});
-
-console.log(response);
+try {
+  const response = await API.post(izzysRestApi, imagesPath, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    response: true,
+    body: { amk: "amk" },
+  });
+  console.log(response);
+} catch (e) {
+  console.log(e);
+}
 
 export const imageChange = async (newImages: Blob[]) => {
   const newImageUrls: string[] = await Promise.all(
