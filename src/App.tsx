@@ -7,18 +7,49 @@ import { imagesPath, izzysRestApi } from "./constants";
 
 Amplify.configure(awsExports);
 
-try {
-  const response = await API.post(izzysRestApi, imagesPath, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    response: true,
-    body: { amk: "amk" },
-  });
-  console.log(response);
-} catch (e) {
-  console.log(e);
-}
+const upload = async (images: File[]) => {
+  try {
+    // const response = await API.post(izzysRestApi, imagesPath, {
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   response: true,
+    //   body: { amk: "amk" },
+    // });
+
+    const response = await fetch("http://localhost:3000/images", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify({ dei: "mum" }),
+    });
+    console.log(await response.json());
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+// try {
+//   // const response = await API.post(izzysRestApi, imagesPath, {
+//   //   headers: {
+//   //     "Content-Type": "application/json",
+//   //   },
+//   //   response: true,
+//   //   body: { amk: "amk" },
+//   // });
+
+//   const response = await fetch("http://localhost:3000/images", {
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     method: "POST",
+//     body: JSON.stringify({ dei: "mum" }),
+//   });
+//   console.log(await response.json());
+// } catch (e) {
+//   console.log(e);
+// }
 
 export const imageChange = async (newImages: Blob[]) => {
   const newImageUrls: string[] = await Promise.all(
@@ -42,6 +73,7 @@ export const imageChange = async (newImages: Blob[]) => {
 function App() {
   const [count, setCount] = useState(0);
   const [images, setImages] = useState<Array<any>>([]);
+  const [files, setFiles] = useState<Array<File>>([]);
 
   const handleUpload = (newImages: string[]) => {
     setImages([...images, ...newImages]);
@@ -102,9 +134,17 @@ function App() {
         }}
       />
 
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <p className="read-the-docs">selected files:</p>
+      <ul className=" flex-col">
+        <li className="w-[200px] h-[100px]">
+          {" sikter "}
+          <img
+            src="https://c8.alamy.com/compde/khg386/bunten-baumen-am-ufer-des-patricia-lake-im-jasper-national-park-mit-pyramide-berg-im-hintergrund-die-ruhige-see-spiegelt-einen-spiegel-imag-khg386.jpg"
+            alt=""
+            className="h-full w-full object-cover"
+          />
+        </li>
+      </ul>
     </div>
   );
 }
