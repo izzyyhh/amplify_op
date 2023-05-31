@@ -70,27 +70,29 @@ app.post("/images", async function (req, res) {
    */
   const images = req.body.images;
 
-  images.forEach(async (image) => {
-    console.log("processing:", image.name);
+  await Promise.all(
+    images.map(async (image) => {
+      console.log("processing:", image.name);
 
-    const buffer = Buffer.from(image.data, "base64");
+      const buffer = Buffer.from(image.data, "base64");
 
-    console.log("buffer", buffer);
+      console.log("buffer", buffer);
 
-    const putObjectCommand = new PutObjectCommand({
-      Bucket: process.env.STORAGE_IMAGES_BUCKETNAME,
-      Key: image.name,
-      ContentType: image.type,
-      Body: buffer,
-    });
+      const putObjectCommand = new PutObjectCommand({
+        Bucket: process.env.STORAGE_IMAGES_BUCKETNAME,
+        Key: image.name,
+        ContentType: image.type,
+        Body: buffer,
+      });
 
-    try {
-      const result = await s3Client.send(putObjectCommand);
-      console.log("S3 result:", result);
-    } catch (e) {
-      console.log(e);
-    }
-  });
+      try {
+        const result = await s3Client.send(putObjectCommand);
+        console.log("S3 result:", result);
+      } catch (e) {
+        console.log(e);
+      }
+    })
+  );
 
   res.json({ success: "images uploaded!" });
 });
