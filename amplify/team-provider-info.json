@@ -98,5 +98,55 @@
         "images": {}
       }
     }
+  },
+  "sandboxsu": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-amplifyop-sandboxsu-144213-authRole",
+      "UnauthRoleArn": "arn:aws:iam::257665494067:role/amplify-amplifyop-sandboxsu-144213-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::257665494067:role/amplify-amplifyop-sandboxsu-144213-authRole",
+      "Region": "eu-west-1",
+      "DeploymentBucketName": "amplify-amplifyop-sandboxsu-144213-deployment",
+      "UnauthRoleName": "amplify-amplifyop-sandboxsu-144213-unauthRole",
+      "StackName": "amplify-amplifyop-sandboxsu-144213",
+      "StackId": "arn:aws:cloudformation:eu-west-1:257665494067:stack/amplify-amplifyop-sandboxsu-144213/bc9b6f10-0079-11ee-ad0e-06728efab16d",
+      "AmplifyAppId": "d3egfvnfy3wcxw",
+      "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-amplifyop-sandboxsu-144213-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
+    },
+    "categories": {
+      "auth": {
+        "amplifyopbd15c1cc": {},
+        "userPoolGroups": {}
+      },
+      "function": {
+        "S3Triggerf8c4082f": {
+          "deploymentBucketName": "amplify-amplifyop-sandboxsu-144213-deployment",
+          "s3Key": "amplify-builds/S3Triggerf8c4082f-346a42796b7a76495236-build.zip"
+        },
+        "graphQlLambdaAuthorizerc844d0a8": {
+          "deploymentBucketName": "amplify-amplifyop-sandboxsu-144213-deployment",
+          "s3Key": "amplify-builds/graphQlLambdaAuthorizerc844d0a8-77753734416532425362-build.zip"
+        },
+        "imagesFunction": {
+          "deploymentBucketName": "amplify-amplifyop-sandboxsu-144213-deployment",
+          "s3Key": "amplify-builds/imagesFunction-6d7669532f63787a4774-build.zip"
+        },
+        "izzysRestApiFunction": {
+          "deploymentBucketName": "amplify-amplifyop-sandboxsu-144213-deployment",
+          "s3Key": "amplify-builds/izzysRestApiFunction-494e6a464c615573522f-build.zip"
+        },
+        "justIzzysFunction": {
+          "deploymentBucketName": "amplify-amplifyop-sandboxsu-144213-deployment",
+          "s3Key": "amplify-builds/justIzzysFunction-367045664e70666e302f-build.zip"
+        },
+        "images": {}
+      },
+      "api": {
+        "amplifyop": {},
+        "izzysRestApi": {}
+      },
+      "storage": {
+        "images": {}
+      }
+    }
   }
 }

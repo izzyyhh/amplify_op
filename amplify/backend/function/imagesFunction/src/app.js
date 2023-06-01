@@ -1,11 +1,3 @@
-/*
-Copyright 2017 - 2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the License. A copy of the License is located at
-    http://aws.amazon.com/apache2.0/
-or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and limitations under the License.
-*/
-
 /* Amplify Params - DO NOT EDIT
 	ENV
 	REGION
@@ -13,9 +5,11 @@ See the License for the specific language governing permissions and limitations 
 Amplify Params - DO NOT EDIT */
 
 const express = require("express");
+const crypto = require("crypto");
 const bodyParser = require("body-parser");
 const awsServerlessExpressMiddleware = require("aws-serverless-express/middleware");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
 const s3Client = new S3Client({
   credentials: {
@@ -25,35 +19,65 @@ const s3Client = new S3Client({
   region: process.env.REGION,
 });
 
-// declare a new express app
+/**
+ * Creates a presigned URL for uploading an object to an S3 bucket.
+
+ * @param {Object} options 
+ * @param {string} options.bucket 
+ * @param {string} [options.key]
+ * @returns {Promise<string>}
+ */
+
+const createPresignedUrlWithClient = ({ bucket, key = "" }) => {
+  const hash = crypto.createHash("sha256").digest("hex");
+  key = key.concat(`_${hash}`);
+  const command = new PutObjectCommand({ Bucket: bucket, Key: key });
+  return getSignedUrl(s3Client, command, { expiresIn: 3600 });
+};
+
 const app = express();
 app.use(bodyParser.json({ limit: "6mb" }));
 app.use(awsServerlessExpressMiddleware.eventContext());
 
-// Enable CORS for all methods
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "*");
   next();
 });
 
-/**********************
- * Example get method *
- **********************/
-
-app.get("/images", function (req, res) {
+app.get("/images/health", function (req, res) {
   // Add your code here
-  res.json({ success: "get call succeed!", url: req.url });
+  res.json({ success: "healthy!", url: req.url });
 });
 
-app.get("/images/*", function (req, res) {
-  // Add your code here
-  res.json({ success: "get call succeed!", url: req.url });
-});
+app.get("/images/surls/:count", async function (req, res) {
+  const count = parseInt(req.params.count);
 
-/****************************
- * Example post method *
- ****************************/
+  if (isNaN(count)) {
+    res.status(400).json({ msg: "Bad Request: count is not a number" });
+    return;
+  } else if (count < 1) {
+    res.status(400).json({ msg: "Bad Request: count hast to be positive" });
+    return;
+  }
+
+  const sUrlsPromises = [];
+
+  for (let c = 0; c < count; c++) {
+    const surl = createPresignedUrlWithClient({
+      bucket: process.env.STORAGE_IMAGES_BUCKETNAME,
+    });
+
+    sUrlsPromises.push(surl);
+  }
+
+  const sUrls = await Promise.all(sUrlsPromises);
+
+  res.json({
+    msg: `successfully created ${count} presigned urls`,
+    surls: sUrls,
+  });
+});
 
 app.post("/images", async function (req, res) {
   /**
@@ -76,8 +100,6 @@ app.post("/images", async function (req, res) {
 
       const buffer = Buffer.from(image.data, "base64");
 
-      console.log("buffer", buffer);
-
       const putObjectCommand = new PutObjectCommand({
         Bucket: process.env.STORAGE_IMAGES_BUCKETNAME,
         Key: image.name,
@@ -97,35 +119,7 @@ app.post("/images", async function (req, res) {
   res.json({ success: "images uploaded!" });
 });
 
-app.post("/images/*", function (req, res) {
-  // Add your code here
-  res.json({ success: "post call succeed!", url: req.url, body: req.body });
-});
-
-/****************************
- * Example put method *
- ****************************/
-
-app.put("/images", function (req, res) {
-  // Add your code here
-  res.json({ success: "put call succeed!", url: req.url, body: req.body });
-});
-
-app.put("/images/*", function (req, res) {
-  // Add your code here
-  res.json({ success: "put call succeed!", url: req.url, body: req.body });
-});
-
-/****************************
- * Example delete method *
- ****************************/
-
 app.delete("/images", function (req, res) {
-  // Add your code here
-  res.json({ success: "delete call succeed!", url: req.url });
-});
-
-app.delete("/images/*", function (req, res) {
   // Add your code here
   res.json({ success: "delete call succeed!", url: req.url });
 });
