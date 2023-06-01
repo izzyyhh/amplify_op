@@ -22,12 +22,16 @@ const uploadWithPresignedUrl = async (url: string, data: any) => {
   return upload;
 };
 
-const getPresignedUrls = async (count: number) => {
-  const response = await API.get(izzysRestApi, `${imagesPath}/surls/${count}`, {
+const getPresignedUrls = async (files: File[]) => {
+  const fileInfos = files.map((f) => ({ name: f.name, type: f.type }));
+  console.log("file infos", fileInfos);
+
+  const response = await API.post(izzysRestApi, `${imagesPath}/surls`, {
     headers: {
       "Content-Type": "application/json",
     },
     response: true,
+    body: { infos: fileInfos },
   });
 
   return response.data.surls as string[];
@@ -90,7 +94,7 @@ const upload = async (files: File[], mode: "client" | "server" = "server") => {
       break;
 
     case "client":
-      const sUrls = await getPresignedUrls(files.length);
+      const sUrls = await getPresignedUrls(files);
 
       for (let i = 0; i < files.length; i++) {
         const sUrl = sUrls[i];

@@ -28,10 +28,14 @@ const s3Client = new S3Client({
  * @returns {Promise<string>}
  */
 
-const createPresignedUrlWithClient = ({ bucket, key = "" }) => {
-  const hash = crypto.createHash("sha256").digest("hex");
-  key = key.concat(`_${hash}`);
-  const command = new PutObjectCommand({ Bucket: bucket, Key: key });
+const createPresignedUrlWithClient = ({ bucket, key = "", fileType }) => {
+  const randomString = crypto.randomBytes(128).toString("hex");
+  key = randomString.concat(`_${key}`);
+  const command = new PutObjectCommand({
+    Bucket: bucket,
+    Key: key,
+    ContentType: fileType,
+  });
   return getSignedUrl(s3Client, command, { expiresIn: 3600 });
 };
 
@@ -50,31 +54,36 @@ app.get("/images/health", function (req, res) {
   res.json({ success: "healthy!", url: req.url });
 });
 
-app.get("/images/surls/:count", async function (req, res) {
-  const count = parseInt(req.params.count);
+app.post("/images/surls/", async function (req, res) {
+  /**
+   * @typedef {Object} ImageInfo
+   * @property {string} name
+   * @property {string} type
+   *
+   */
 
-  if (isNaN(count)) {
-    res.status(400).json({ msg: "Bad Request: count is not a number" });
-    return;
-  } else if (count < 1) {
-    res.status(400).json({ msg: "Bad Request: count hast to be positive" });
+  /**
+   * @type {Array<ImageInfo>}
+   */
+  const imageInfos = req.body.infos;
+
+  if (!imageInfos) {
+    res.status(400).json({ msg: "Bad Request: missing file infos" });
     return;
   }
 
-  const sUrlsPromises = [];
-
-  for (let c = 0; c < count; c++) {
-    const surl = createPresignedUrlWithClient({
+  const sUrlsPromises = imageInfos.map((imageInfo) => {
+    return createPresignedUrlWithClient({
       bucket: process.env.STORAGE_IMAGES_BUCKETNAME,
+      key: imageInfo.name,
+      fileType: imageInfo.type,
     });
-
-    sUrlsPromises.push(surl);
-  }
+  });
 
   const sUrls = await Promise.all(sUrlsPromises);
 
   res.json({
-    msg: `successfully created ${count} presigned urls`,
+    msg: `successfully created ${imageInfos.length} presigned urls`,
     surls: sUrls,
   });
 });
