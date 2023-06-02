@@ -13,6 +13,30 @@ type MyImage = {
   data: string;
 };
 
+const uploadWithPresignedUrl = async (url: string, data: any) => {
+  const upload = await fetch(url, {
+    method: "PUT",
+    body: data,
+  });
+
+  return upload;
+};
+
+const getPresignedUrls = async (files: File[]) => {
+  const fileInfos = files.map((f) => ({ name: f.name, type: f.type }));
+  console.log("file infos", fileInfos);
+
+  const response = await API.post(izzysRestApi, `${imagesPath}/surls`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    response: true,
+    body: { infos: fileInfos },
+  });
+
+  return response.data.surls as string[];
+};
+
 const convertBase64 = (file: File) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -35,35 +59,55 @@ const convertBase64 = (file: File) => {
   });
 };
 
-const upload = async (files: File[]) => {
-  try {
-    const encodedImages = (await Promise.all(
-      files.map((file) => convertBase64(file))
-    )) as MyImage[];
+const upload = async (files: File[], mode: "client" | "server" = "server") => {
+  switch (mode) {
+    case "server":
+      try {
+        const encodedImages = (await Promise.all(
+          files.map((file) => convertBase64(file))
+        )) as MyImage[];
 
-    console.log("encoded images:", encodedImages);
+        console.log("encoded images:", encodedImages);
 
-    const response = await API.post(izzysRestApi, imagesPath, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      response: true,
-      body: { images: encodedImages },
-    });
+        const response = await API.post(izzysRestApi, imagesPath, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          response: true,
+          body: { images: encodedImages },
+        });
 
-    console.log(response);
+        console.log(response);
 
-    // dev
-    // const response = await fetch("http://localhost:3000/images", {
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   method: "POST",
-    //   body: JSON.stringify({ images: encodedImages }),
-    // });
-    // console.log(await response.json());
-  } catch (e) {
-    console.log(e);
+        // dev
+        // const response = await fetch("http://localhost:3000/images", {
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   method: "POST",
+        //   body: JSON.stringify({ images: encodedImages }),
+        // });
+        // console.log(await response.json());
+      } catch (e) {
+        console.log(e);
+      }
+      break;
+
+    case "client":
+      const sUrls = await getPresignedUrls(files);
+
+      for (let i = 0; i < files.length; i++) {
+        const sUrl = sUrls[i];
+        const file = files[i];
+
+        const uploadResult = uploadWithPresignedUrl(
+          sUrl,
+          await file.arrayBuffer()
+        );
+
+        console.log("upload result:", (await uploadResult).status);
+      }
+      break;
   }
 };
 
@@ -87,9 +131,9 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      <h1>Vite + React</h1>
+      <h1>All about Images</h1>
       <div className="card">
-        <button onClick={() => upload(images)}>Upload</button>
+        <button onClick={() => upload(images, "client")}>Upload</button>
       </div>
 
       <input
