@@ -81,10 +81,15 @@ app.post("/images/surls/", async function (req, res) {
   });
 
   const sUrls = await Promise.all(sUrlsPromises);
+  const urls = sUrls.map((sUrl) => sUrl.split("?")[0]);
+  // TODO: add urls to response
+  // schema:
+  // https://s3.region-code.amazonaws.com/bucket-name/key-name
 
   res.json({
     msg: `successfully created ${imageInfos.length} presigned urls`,
     surls: sUrls,
+    urls,
   });
 });
 
