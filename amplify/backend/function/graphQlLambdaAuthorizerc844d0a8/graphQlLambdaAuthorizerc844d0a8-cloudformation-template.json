@@ -47,12 +47,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "izzysRestApiFunction",
+            "graphQlLambdaAuthorizerc844d0a8",
             {
               "Fn::Join": [
                 "",
                 [
-                  "izzysRestApiFunction",
+                  "graphQlLambdaAuthorizerc844d0a8",
                   "-",
                   {
                     "Ref": "env"
@@ -89,12 +89,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "amplifyopLambdaRoledaa00271",
+            "amplifyopLambdaRole2a4fddef",
             {
               "Fn::Join": [
                 "",
                 [
-                  "amplifyopLambdaRoledaa00271",
+                  "amplifyopLambdaRole2a4fddef",
                   "-",
                   {
                     "Ref": "env"
@@ -163,6 +163,16 @@
             }
           ]
         }
+      }
+    },
+    "PermissionForAppSyncToInvokeLambda": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "appsync.amazonaws.com"
       }
     }
   },

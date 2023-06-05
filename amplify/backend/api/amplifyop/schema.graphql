@@ -1,0 +1,23 @@
+type Event
+  @model
+  @auth(rules: [{ allow: public, provider: iam }, { allow: private }]) {
+  id: ID!
+  name: String!
+  type: String!
+    @index(
+      name: "EventsByDate"
+      queryField: "EventsByDate"
+      sortKeyFields: ["createdAt"]
+    )
+  createdAt: String!
+  Images: [S3Object]
+  owner: String!
+  isPublic: Boolean! @default(value: "false")
+  participants: [String]
+}
+
+type S3Object {
+  bucket: String!
+  region: String!
+  key: String!
+}

@@ -2,15 +2,10 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "{\"createdOn\":\"Mac\",\"createdBy\":\"Amplify\",\"createdWith\":\"11.1.1\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
   "Parameters": {
-    "CloudWatchRule": {
-      "Type": "String",
-      "Default": "NONE",
-      "Description": " Schedule Expression"
-    },
-    "deploymentBucketName": {
+    "env": {
       "Type": "String"
     },
-    "env": {
+    "deploymentBucketName": {
       "Type": "String"
     },
     "s3Key": {
@@ -35,24 +30,16 @@
         "aws:asset:property": "Code"
       },
       "Properties": {
-        "Code": {
-          "S3Bucket": {
-            "Ref": "deploymentBucketName"
-          },
-          "S3Key": {
-            "Ref": "s3Key"
-          }
-        },
         "Handler": "index.handler",
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "izzysRestApiFunction",
+            "S3Triggerf8c4082f",
             {
               "Fn::Join": [
                 "",
                 [
-                  "izzysRestApiFunction",
+                  "S3Triggerf8c4082f",
                   "-",
                   {
                     "Ref": "env"
@@ -66,9 +53,6 @@
           "Variables": {
             "ENV": {
               "Ref": "env"
-            },
-            "REGION": {
-              "Ref": "AWS::Region"
             }
           }
         },
@@ -79,8 +63,15 @@
           ]
         },
         "Runtime": "nodejs16.x",
-        "Layers": [],
-        "Timeout": 25
+        "Timeout": 25,
+        "Code": {
+          "S3Bucket": {
+            "Ref": "deploymentBucketName"
+          },
+          "S3Key": {
+            "Ref": "s3Key"
+          }
+        }
       }
     },
     "LambdaExecutionRole": {
@@ -89,12 +80,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "amplifyopLambdaRoledaa00271",
+            "S3Triggerf8c4082fLambdaRolef8c4082f",
             {
               "Fn::Join": [
                 "",
                 [
-                  "amplifyopLambdaRoledaa00271",
+                  "S3Triggerf8c4082fLambdaRolef8c4082f",
                   "-",
                   {
                     "Ref": "env"
