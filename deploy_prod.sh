@@ -4,7 +4,7 @@ set -e
 IFS='|'
 
 CODEGEN="{\
-\"generateCode\":true,\
+\"generateCode\":false,\
 \"codeLanguage\":\"javascript\",\
 \"fileNamePattern\":\"src/graphql/**/*.js\",\
 \"generatedFileName\":\"API\",\
