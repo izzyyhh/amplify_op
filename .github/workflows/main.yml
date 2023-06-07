@@ -58,9 +58,11 @@ jobs:
       - name: Install CLI
         run: npm install -g @aws-amplify/cli
       - name: Create Credentials and Config
-        run: mkdir ~/.aws && echo $AWS_CREDS >> ~/.aws/credentials && echo $AWS_CONFIG >>  ~/.aws/config
+        run: mkdir ~/.aws && echo $AWS_CREDS >> ~/.aws/credentials && echo $AWS_CONFIG >> ~/.aws/config && ls ~/.aws && echo ~/.aws/credentials
       - name: Headless Amplify CLI Deploy
         run: |
+          ls
+          ls ~/.aws
           set -e
           IFS='|'
           export CODEGEN="{\
