@@ -76,7 +76,7 @@ jobs:
           }"
           export AWSCLOUDFORMATIONCONFIG="{\
           \"configLevel\":\"project\",\
-          \"useProfile\":true,\
+          \"useProfile\":false,\
           \"profileName\":\"default\",\
           \"region\":\"eu-west-1\"\
           }"
