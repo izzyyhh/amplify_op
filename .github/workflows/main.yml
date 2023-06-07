@@ -1,0 +1,109 @@
+name: Main, Quality Check and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14.x"
+
+      - name: Install dependencies
+        run: npm i
+
+      - uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: node_modules
+
+  unit_test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: node_modules
+      - name: Unit Tests
+        run: npm run test
+
+  lint:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: node_modules
+      - name: Lint
+        run: npm run lint
+
+  deploy_amplify:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install CLI
+        run: npm install -g @aws-amplify/cli
+      - name: Create Credentials and Config
+        run: mkdir ~/.aws && echo $AWS_CREDS >> ~/.aws/credentials && echo $AWS_CONFIG >>  ~/.aws/config
+      - name: Prepare Headless Amplify
+        run: |
+          export CODEGEN="{\
+          \"generateCode\":true,\
+          \"codeLanguage\":\"javascript\",\
+          \"fileNamePattern\":\"src/graphql/**/*.js\",\
+          \"generatedFileName\":\"API\",\
+          \"generateDocs\":true\
+          }"
+          export REACTCONFIG="{\
+          \"SourceDir\":\"src\",\
+          \"DistributionDir\":\"dist\",\
+          \"BuildCommand\":\"npm run build\",\
+          \"StartCommand\":\"npm run start\"\
+          }"
+          export AWSCLOUDFORMATIONCONFIG="{\
+          \"configLevel\":\"project\",\
+          \"useProfile\":true,\
+          \"profileName\":\"default\",\
+          \"region\":\"eu-west-1\"\
+          }"
+          export AMPLIFY="{\
+          \"projectName\":\"$AMPLIFY_PROJECT_NAME\",\
+          \"envName\":\"$AMPLIFY_ENV_NAME\",\
+          \"defaultEditor\":\"code\"\
+          }"
+          export FRONTEND="{\
+          \"frontend\":\"javascript\",\
+          \"framework\":\"react\",\
+          \"config\":$REACTCONFIG\
+          }"
+          export PROVIDERS="{\
+          \"awscloudformation\":$AWSCLOUDFORMATIONCONFIG\
+          }"
+      - name: Deploy
+        run: |
+          amplify init \
+          --amplify $AMPLIFY \
+          --frontend $FRONTEND \
+          --providers $PROVIDERS \
+          --yes \
+          --appId $AMPLIFY_APP_ID \
+
+          amplify publish \
+          --codegen $CODEGEN \
+          --yes \
+          --appId $AMPLIFY_APP_ID \
+          --envName $AMPLIFY_ENV_NAME
