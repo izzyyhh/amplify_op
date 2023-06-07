@@ -57,55 +57,20 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install CLI
         run: npm install -g @aws-amplify/cli
-      - name: Create Credentials and Config
-        run: mkdir ~/.aws && echo $AWS_CREDS >> ~/.aws/credentials && echo $AWS_CONFIG >>  ~/.aws/config
-      - name: Prepare Headless Amplify
+      - name: Headless Amplify CLI Deploy
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          AMPLIFY_PROJECT_NAME: ${{ secrets.AMPLIFY_PROJECT_NAME }}
+          AMPLIFY_ENV_NAME: ${{ secrets.AMPLIFY_ENV_NAME }}
+          AMPLIFY_APP_ID: ${{ secrets.AMPLIFY_APP_ID }}
+          AWS_CREDS: ${{ secrets.AWS_CREDS }}
+          AWS_CONFIG: ${{ secrets.AWS_CREDS }}
         run: |
-          set -e
-          IFS='|'
-          export CODEGEN="{\
-          \"generateCode\":true,\
-          \"codeLanguage\":\"javascript\",\
-          \"fileNamePattern\":\"src/graphql/**/*.js\",\
-          \"generatedFileName\":\"API\",\
-          \"generateDocs\":true\
-          }"
-          export REACTCONFIG="{\
-          \"SourceDir\":\"src\",\
-          \"DistributionDir\":\"dist\",\
-          \"BuildCommand\":\"npm run build\",\
-          \"StartCommand\":\"npm run start\"\
-          }"
-          export AWSCLOUDFORMATIONCONFIG="{\
-          \"configLevel\":\"project\",\
-          \"useProfile\":true,\
-          \"profileName\":\"default\",\
-          \"region\":\"eu-west-1\"\
-          }"
-          export AMPLIFY="{\
-          \"projectName\":\"amplifyop\",\
-          \"envName\":\"prod\",\
-          \"defaultEditor\":\"code\"\
-          }"
-          export FRONTEND="{\
-          \"frontend\":\"javascript\",\
-          \"framework\":\"react\",\
-          \"config\":$REACTCONFIG\
-          }"
-          export PROVIDERS="{\
-          \"awscloudformation\":$AWSCLOUDFORMATIONCONFIG\
-          }"
-      - name: Deploy
-        run: |
-          amplify init \
-          --amplify $AMPLIFY \
-          --frontend $FRONTEND \
-          --providers $PROVIDERS \
-          --yes \
-          --appId $AMPLIFY_APP_ID \
-
-          amplify push \
-          --codegen $CODEGEN \
-          --yes \
-          --appId $AMPLIFY_APP_ID \
-          --envName $AMPLIFY_ENV_NAME
+          mkdir ~/.aws && echo $AWS_CREDS >> ~/.aws/credentials && echo $AWS_CONFIG >> ~/.aws/config
+          ls -l ~/.aws
+          echo ~/aws/credentials
+          echo "geht nicht :)"
+          echo $AWS_REGION
+          sh deploy_prod.sh

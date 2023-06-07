@@ -21,7 +21,9 @@ AWSCLOUDFORMATIONCONFIG="{\
 \"configLevel\":\"project\",\
 \"useProfile\":true,\
 \"profileName\":\"default\",\
-\"region\":\"eu-west-1\"\
+\"accessKeyId\":\"$AWS_ACCESS_KEY_ID\",\
+\"secretAccessKey\":\"$AWS_SECRET_ACCESS_KEY\",\
+\"region\":\"$AWS_REGION\"\
 }"
 AMPLIFY="{\
 \"projectName\":\"$AMPLIFY_PROJECT_NAME\",\
@@ -46,7 +48,7 @@ amplify init \
 --appId $AMPLIFY_APP_ID \
 
 
-amplify publish \
+amplify push \
 --codegen $CODEGEN \
 --yes \
 --appId $AMPLIFY_APP_ID \
