@@ -59,15 +59,9 @@ jobs:
         run: npm install -g @aws-amplify/cli
       - name: Headless Amplify CLI Deploy
         env:
-          AWS_SDK_LOAD_CONFIG: 1
-          AWS_CREDS: ${{ secrets.AWS_CREDS }}
-          AWS_CONFIG: ${{ secrets.AWS_CONFIG }}
-          AMPLIFY_APP_ID: ${{ secrets.AMPLIFY_APP_ID }}
-          AMPLIFY_ENV_NAME: ${{ secrets.AMPLIFY_ENV_NAME }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          mkdir ~/.aws && echo $AWS_CREDS >> ~/.aws/credentials && echo $AWS_CONFIG >> ~/.aws/config
-          ls
-          ls ~/.aws
           set -e
           IFS='|'
           export CODEGEN="{\
