@@ -59,7 +59,7 @@ jobs:
         run: npm install -g @aws-amplify/cli
       - name: Create Credentials and Config
         run: mkdir ~/.aws && echo $AWS_CREDS >> ~/.aws/credentials && echo $AWS_CONFIG >>  ~/.aws/config
-      - name: Prepare Headless Amplify
+      - name: Headless Amplify CLI Deploy
         run: |
           set -e
           IFS='|'
@@ -95,8 +95,6 @@ jobs:
           export PROVIDERS="{\
           \"awscloudformation\":$AWSCLOUDFORMATIONCONFIG\
           }"
-      - name: Deploy
-        run: |
           amplify init \
           --amplify $AMPLIFY \
           --frontend $FRONTEND \
