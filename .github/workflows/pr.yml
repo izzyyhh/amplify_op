@@ -1,4 +1,4 @@
-name: On Pull Request Quality Check
+name: Main, Quality Check and Deploy
 
 on:
   push:
@@ -57,5 +57,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install CLI
         run: npm install -g @aws-amplify/cli
+      - name: Create Credentials and Config
+        run: echo $AWS_CREDS >> ~/.aws/credentials && echo $AWS_CONFIG >>  ~/.aws/config
       - name: Deploy
         run: sh deploy_prod.sh
